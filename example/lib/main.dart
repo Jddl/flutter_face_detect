@@ -16,7 +16,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -40,7 +39,9 @@ class _HomeState extends State<Home> {
 
   Future<bool> activeOnLine() async {
     try {
-      bool result = await FaceDetectPlugin.activeOnLine("CjGWF7wY9uYDeKsUD8xcBdyM2Xkbc2AyjQkpc2gvFpWu","HKyEKmpqQB84uyj7M23bQWi4Uwto7ZLYyoui9SszrbaF");
+      bool result = await FaceDetectPlugin.activeOnLine(
+          "GJht4drCMdH9t2qV4trUbgeERDNAgdgr9bExHx3cuPCf",
+          "9KH8HkgNmshhqRKqZqDxR1cbmeuKjC7vUJLSREaAGGU6");
       return result;
     } catch (e) {
       print(e.message);
@@ -50,9 +51,9 @@ class _HomeState extends State<Home> {
   Future<void> getSdkVersion() async {
     try {
       VersionInfoModel result = await FaceDetectPlugin.getSdkVersion();
-      print(result.toString());
+      print(result.version);
     } catch (e) {
-      print(e.message);
+      print(e);
     }
   }
 
@@ -61,11 +62,12 @@ class _HomeState extends State<Home> {
       ActiveFileInfoModel result = await FaceDetectPlugin.getActiveFileInfo();
       print(result.toString());
     } catch (e) {
-      print(e.message);
+      //print(e.message);
     }
   }
 
-  Future<void> setFaceDetectOrientPriority(FaceDetectOrientPriorityEnum faceDetectOrientPriorityEnum) async {
+  Future<void> setFaceDetectOrientPriority(
+      FaceDetectOrientPriorityEnum faceDetectOrientPriorityEnum) async {
     try {
       await FaceDetectPlugin.setFaceDetectDegree(faceDetectOrientPriorityEnum);
       print(faceDetectOrientPriorityEnum);
@@ -104,7 +106,8 @@ class _HomeState extends State<Home> {
             child: Text("相机模式人脸检测"),
             onPressed: () {
               print("打开相机");
-              Navigator.push(context, MaterialPageRoute(builder: (context) => CameraView()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => CameraView()));
             },
           )
         ],
@@ -113,37 +116,42 @@ class _HomeState extends State<Home> {
   }
 
   void setFaceDetectOrientPriorityView(BuildContext context) {
-    showModalBottomSheet(context: context, builder: (BuildContext context) {
-      return Container(
-        height: 240.0,
-        color: Color(0xfff1f1f1),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            RaisedButton(
-              onPressed: () => setFaceDetectOrientPriority(FaceDetectOrientPriorityEnum.ASF_OP_0_ONLY),
-              child: Text("视频模式仅检测0度"),
-            ),
-            RaisedButton(
-              onPressed: () => setFaceDetectOrientPriority(FaceDetectOrientPriorityEnum.ASF_OP_90_ONLY),
-              child: Text("视频模式仅检测90度"),
-            ),
-            RaisedButton(
-              onPressed: () => setFaceDetectOrientPriority(FaceDetectOrientPriorityEnum.ASF_OP_180_ONLY),
-              child: Text("视频模式仅检测180度"),
-            ),
-            RaisedButton(
-              onPressed: () => setFaceDetectOrientPriority(FaceDetectOrientPriorityEnum.ASF_OP_270_ONLY),
-              child: Text("视频模式仅检测270度"),
-            ),
-            RaisedButton(
-              onPressed: () => setFaceDetectOrientPriority(FaceDetectOrientPriorityEnum.ASF_OP_ALL_OUT),
-              child: Text("视频模式全方向人脸检测"),
-            )
-          ]
-        ),
-      );
-    });
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 240.0,
+            color: Color(0xfff1f1f1),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  RaisedButton(
+                    onPressed: () => setFaceDetectOrientPriority(
+                        FaceDetectOrientPriorityEnum.ASF_OP_0_ONLY),
+                    child: Text("视频模式仅检测0度"),
+                  ),
+                  RaisedButton(
+                    onPressed: () => setFaceDetectOrientPriority(
+                        FaceDetectOrientPriorityEnum.ASF_OP_90_ONLY),
+                    child: Text("视频模式仅检测90度"),
+                  ),
+                  RaisedButton(
+                    onPressed: () => setFaceDetectOrientPriority(
+                        FaceDetectOrientPriorityEnum.ASF_OP_180_ONLY),
+                    child: Text("视频模式仅检测180度"),
+                  ),
+                  RaisedButton(
+                    onPressed: () => setFaceDetectOrientPriority(
+                        FaceDetectOrientPriorityEnum.ASF_OP_270_ONLY),
+                    child: Text("视频模式仅检测270度"),
+                  ),
+                  RaisedButton(
+                    onPressed: () => setFaceDetectOrientPriority(
+                        FaceDetectOrientPriorityEnum.ASF_OP_ALL_OUT),
+                    child: Text("视频模式全方向人脸检测"),
+                  )
+                ]),
+          );
+        });
   }
 }
-

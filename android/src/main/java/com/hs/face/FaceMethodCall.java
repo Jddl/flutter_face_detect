@@ -3,6 +3,7 @@ package com.hs.face;
 import android.app.Activity;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
 import com.arcsoft.face.ActiveFileInfo;
 import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.FaceEngine;
@@ -48,7 +49,7 @@ public class FaceMethodCall {
         int code = FaceEngine.getActiveFileInfo(activity, activeFileInfo);
         if (code == ErrorInfo.MOK){
             Log.i(TAG,"获取激活文件信息："+activeFileInfo.toString());
-            result.success(activeFileInfo);
+            result.success(JSON.toJSONString(activeFileInfo));
         }else{
             Log.e(TAG,"GetActiveFileInfo failed, code is  : " + code);
             result.error(""+code,"获取激活文件信息失败，错误码："+code+"请根据错误码查询对应错误", null);
@@ -64,7 +65,7 @@ public class FaceMethodCall {
         int code = FaceEngine.getVersion(versionInfo);
         if (code == ErrorInfo.MOK){
             Log.i(TAG,"获取版本信息："+versionInfo.toString());
-            result.success(versionInfo);
+            result.success(JSON.toJSONString(versionInfo));
         }else{
             Log.e(TAG,"GetSdkVersion failed, code is  : " + code);
             result.error(""+code,"获取sdk版本信息，错误码："+code+"请根据错误码查询对应错误", null);
