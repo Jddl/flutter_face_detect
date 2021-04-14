@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 class FaceDetectInfoModel {
   FaceRectModel rect;
   int sex;
@@ -5,13 +8,15 @@ class FaceDetectInfoModel {
   int liveness;
   int color;
   String name;
+  Uint8List feature;
 
   FaceDetectInfoModel({
     this.rect,
     this.sex: -1,
     this.age: 0,
     this.liveness: -1,
-    this.color: -1
+    this.color: -1,
+    this.feature
   });
 
   factory FaceDetectInfoModel.fromJson(Map<String, dynamic> json) => FaceDetectInfoModel(
@@ -20,6 +25,7 @@ class FaceDetectInfoModel {
     age: json["age"] == null ? 0 : json["age"],
     liveness: json["liveness"] == null ? -1 : json["liveness"],
     color: json["color"] == null ? -1 : json["color"],
+    feature: json["feature"] == null ? null : base64Decode(json["feature"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -27,7 +33,8 @@ class FaceDetectInfoModel {
     "sex": sex == null ? null : sex,
     "age": age == null ? null : age,
     "liveness": liveness == null ? null : liveness,
-    "color": color == null ? null : color
+    "color": color == null ? null : color,
+    "feature": feature == null?null:base64Encode(feature)
   };
 }
 

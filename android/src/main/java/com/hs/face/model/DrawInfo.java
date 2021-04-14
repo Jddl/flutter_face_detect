@@ -9,14 +9,16 @@ public class DrawInfo {
     private int liveness;
     private int color;
     private String name = null;
+    private byte[] feature = null;
 
-    public DrawInfo(Rect rect, int sex, int age,int liveness,int color,String name) {
+    public DrawInfo(Rect rect, int sex, int age,int liveness,int color,String name,byte[] feature) {
         this.rect = rect;
         this.sex = sex;
         this.age = age;
         this.liveness = liveness;
         this.color = color;
         this.name = name;
+        this.feature = feature;
     }
 
     public String getName() {
@@ -65,5 +67,13 @@ public class DrawInfo {
 
     public void setColor(int color) {
         this.color = color;
+    }
+
+    public byte[] getFeature() {
+        return feature;
+    }
+
+    public void setFeature(byte[] feature) {
+        this.feature = feature;
     }
 }

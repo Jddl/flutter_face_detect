@@ -8,6 +8,8 @@ import 'package:flutter/services.dart';
 
 import 'enum/face_detect_orient_priority_enum.dart';
 
+export 'package:face/model/face_detect_info_model.dart';
+
 class FaceDetectPlugin {
   static const MethodChannel _methodChannel =
       const MethodChannel('com.hs.face/method');

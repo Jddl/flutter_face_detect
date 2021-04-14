@@ -9,6 +9,7 @@ import 'package:face/model/version_info_model.dart';
 import 'package:face/model/active_file_info_model.dart';
 import 'package:face/enum/face_detect_orient_priority_enum.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'face_view.dart';
 
@@ -20,13 +21,60 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Home(),
+      home: SplashPage(),
     );
   }
 }
+
+class SplashPage extends StatefulWidget {
+  @override
+  _SplashPageState createState() => _SplashPageState();
+}
+
+class _SplashPageState extends State<SplashPage> {
+
+  Future<bool> activeOnLine() async {
+    try {
+      bool result = await FaceDetectPlugin.activeOnLine(
+          "GJht4drCMdH9t2qV4trUbgeERDNAgdgr9bExHx3cuPCf",
+          "9KH8HkgNmshhqRKqZqDxR1cbmeuKjC7vUJLSREaAGGU6");
+      return result;
+    } catch (e) {
+      print(e.message);
+    }
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    goToCamera();
+  }
+
+  Future<void> goToCamera() async {
+    await [
+      Permission.camera,
+      Permission.storage,
+      Permission.phone
+    ].request();
+    //await Permission.camera.request();
+    await activeOnLine();
+    Navigator.push(
+      context,
+      new MaterialPageRoute(builder: (context) => new CameraView()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
 
 class Home extends StatefulWidget {
   @override

@@ -16,6 +16,7 @@ import com.arcsoft.face.AgeInfo;
 import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.Face3DAngle;
 import com.arcsoft.face.FaceEngine;
+import com.arcsoft.face.FaceFeature;
 import com.arcsoft.face.FaceInfo;
 import com.arcsoft.face.GenderInfo;
 import com.arcsoft.face.LivenessInfo;
@@ -87,15 +88,15 @@ public class FaceDetectCameraView implements PlatformView, MethodCallHandler, On
         }
 
         // 建立通道
-        MethodChannel methodChannel = new MethodChannel(binaryMessenger, METHOD_CHANNEL_PREFIX+viewId);
+        MethodChannel methodChannel = new MethodChannel(binaryMessenger, METHOD_CHANNEL_PREFIX + viewId);
         methodChannel.setMethodCallHandler(this);
         // 建立Stream通道
-        streamHandlerImpl = new StreamHandlerImpl(binaryMessenger, EVENT_CHANNEL_PREFIX+viewId);
+        streamHandlerImpl = new StreamHandlerImpl(binaryMessenger, EVENT_CHANNEL_PREFIX + viewId);
 
         // 载入xml view层
-        displayView = activity.getLayoutInflater().inflate(R.layout.face_detect_view_activity,null);
+        displayView = activity.getLayoutInflater().inflate(R.layout.face_detect_view_activity, null);
         previewView = displayView.findViewById(R.id.preview_view);
-        faceRectView =  displayView.findViewById(R.id.face_rect_view);
+        faceRectView = displayView.findViewById(R.id.face_rect_view);
         // 添加view监听，在布局结束后才做初始化操作
         previewView.getViewTreeObserver().addOnGlobalLayoutListener(this);
     }
@@ -122,16 +123,16 @@ public class FaceDetectCameraView implements PlatformView, MethodCallHandler, On
                 break;
             case "initEngine":
                 initEngine();
-                if (afCode!=ErrorInfo.MOK) {
-                    result.error(""+afCode,"引擎初始化失败","");
+                if (afCode != ErrorInfo.MOK) {
+                    result.error("" + afCode, "引擎初始化失败", "");
                 } else {
                     result.success(true);
                 }
                 break;
-            case  "unInitEngine":
+            case "unInitEngine":
                 unInitEngine();
-                if (afCode!=ErrorInfo.MOK) {
-                    result.error(""+afCode,"引擎销毁失败","");
+                if (afCode != ErrorInfo.MOK) {
+                    result.error("" + afCode, "引擎销毁失败", "");
                 } else {
                     result.success(true);
                 }
@@ -188,7 +189,18 @@ public class FaceDetectCameraView implements PlatformView, MethodCallHandler, On
                 List<DrawInfo> drawInfoList = new ArrayList<>();
                 for (int i = 0; i < faceInfoList.size(); i++) {
                     int faceId = faceInfoList.get(i).getFaceId();
-                    drawInfoList.add(new DrawInfo(drawHelper.adjustRect(faceInfoList.get(i).getRect()), genderInfoList.get(i).getGender(), ageInfoList.get(i).getAge(), faceLivenessInfoList.get(i).getLiveness(), RecognizeColor.COLOR_UNKNOWN, null));
+                    FaceFeature faceFeature = new FaceFeature();
+                    int featureCode = faceEngine.extractFaceFeature(nv21, previewSize.width, previewSize.height, FaceEngine.CP_PAF_NV21, faceInfoList.get(i), faceFeature);
+                    if (featureCode == ErrorInfo.MOK) {
+                        drawInfoList.add(new DrawInfo(
+                                drawHelper.adjustRect(faceInfoList.get(i).getRect()),
+                                genderInfoList.get(i).getGender(),
+                                ageInfoList.get(i).getAge(),
+                                faceLivenessInfoList.get(i).getLiveness(),
+                                RecognizeColor.COLOR_UNKNOWN,
+                                null,
+                                faceFeature.getFeatureData()));
+                    }
                 }
                 streamHandlerImpl.eventSinkSuccess(JSON.toJSONString(drawInfoList));
                 // 画人脸追踪框
@@ -250,7 +262,7 @@ public class FaceDetectCameraView implements PlatformView, MethodCallHandler, On
         int detectFaceMaxNum = 20;
         afCode = faceEngine.init(activity, detectMode, ConfigUtil.getFtOrient(activity), detectFaceScaleVal, detectFaceMaxNum, combinedMask);
         if (afCode != ErrorInfo.MOK) {
-            Log.e(TAG, "InitEngine Error, RequestCode :"+afCode);
+            Log.e(TAG, "InitEngine Error, RequestCode :" + afCode);
         }
         Log.i(TAG, "InitEngine Success, RequestCode :" + afCode);
     }
