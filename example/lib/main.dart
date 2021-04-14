@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -5,6 +8,7 @@ import 'package:face/face_detect_plugin.dart';
 import 'package:face/model/version_info_model.dart';
 import 'package:face/model/active_file_info_model.dart';
 import 'package:face/enum/face_detect_orient_priority_enum.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'face_view.dart';
 
@@ -31,7 +35,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String _platformVersion = 'Unknown';
-
+  final picker = ImagePicker();
   @override
   void initState() {
     super.initState();
@@ -62,7 +66,7 @@ class _HomeState extends State<Home> {
       ActiveFileInfoModel result = await FaceDetectPlugin.getActiveFileInfo();
       print(result.toString());
     } catch (e) {
-      //print(e.message);
+      print(e);
     }
   }
 
@@ -73,10 +77,73 @@ class _HomeState extends State<Home> {
       print(faceDetectOrientPriorityEnum);
       Navigator.pop(context);
     } catch (e) {
-      print(e.message);
+      print(e);
+    }
+  }
+  Future<void> getImageToolVersion() async {
+    try {
+      var result = await FaceDetectPlugin.getImageToolVersion();
+      print(result);
+    } catch (e) {
+      print(e);
     }
   }
 
+  Uint8List buffer1;
+  Uint8List buffer2;
+  Future getFaceFeature1() async {
+    try {
+      final pickedFile = await picker.getImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        var  _image = File(pickedFile.path);
+        var buffer = await _image.readAsBytes();
+        var ret= await FaceDetectPlugin.getFaceFeature(buffer);
+        if(ret!=null && ret.isNotEmpty){
+          print(ret.length);
+          print(ret[0].runtimeType);
+          print(ret[0] is Uint8List);
+          print(ret[0]);
+          buffer1= ret[0];
+        }else{
+          print('未找到人脸');
+        }
+      } else {
+        print('No image selected.');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future getFaceFeature2() async {
+    try {
+      final pickedFile = await picker.getImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        var  _image = File(pickedFile.path);
+        var buffer = await _image.readAsBytes();
+        var ret= await FaceDetectPlugin.getFaceFeature(buffer);
+        if(ret!=null && ret.isNotEmpty){
+          print(ret.length);
+          print(ret[0].runtimeType);
+          print(ret[0] is Uint8List);
+          print(ret[0]);
+          buffer2= ret[0];
+        }else{
+          print('未找到人脸');
+        }
+      } else {
+        print('No image selected.');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+  Future compareFaceFeature() async {
+    if (buffer1!=null && buffer2!=null){
+      var ret= await FaceDetectPlugin.compareFaceFeature(buffer1, buffer2);
+      print('Score: $ret');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,7 +176,11 @@ class _HomeState extends State<Home> {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => CameraView()));
             },
-          )
+          ),
+          ElevatedButton(onPressed: getImageToolVersion, child: Text("获取Tool版本")),
+          ElevatedButton(onPressed: getFaceFeature1, child: Text("照片1")),
+          ElevatedButton(onPressed: getFaceFeature2, child: Text("照片2")),
+          ElevatedButton(onPressed: compareFaceFeature, child: Text("对比")),
         ],
       ),
     );
@@ -154,4 +225,6 @@ class _HomeState extends State<Home> {
           );
         });
   }
+
+
 }

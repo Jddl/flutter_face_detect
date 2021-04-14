@@ -51,6 +51,18 @@ public class FacePluginMethodCallHandler implements MethodCallHandler {
                 int faceDetectOrientPriority = (int) call.argument("faceDetectOrientPriority");
                 faceMethodCall.handlerSetFaceDetectOrientPriority(faceDetectOrientPriority, result);
                 break;
+            case "getImageUtilVersion":
+                faceMethodCall.handlerGetImageUtilVersion(result);
+                break;
+            case "getFaceFeature":
+                byte[] buffer = call.argument("buffer");
+                faceMethodCall.handlerGetFaceId(buffer,result);
+                break;
+            case "compareFaceFeature":
+                byte[] feature1 = call.argument("feature1");
+                byte[] feature2 = call.argument("feature2");
+                faceMethodCall.handlerCompareFaceFeature(feature1,feature2,result);
+                break;
             default:
                 result.notImplemented();
         }

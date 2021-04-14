@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:face/model/active_file_info_model.dart';
 import 'package:face/model/version_info_model.dart';
@@ -35,6 +36,24 @@ class FaceDetectPlugin {
     return versionInfo;
   }
 
+  static Future<String> getImageToolVersion() async {
+    var result = await _methodChannel.invokeMethod('getImageUtilVersion');
+    return result;
+  }
+
+  static Future<List<Uint8List>> getFaceFeature(Uint8List buffer) async {
+    var result =
+        await _methodChannel.invokeMethod('getFaceFeature', {'buffer': buffer});
+    if (result != null) {
+      return result.cast<Uint8List>();
+    }
+    return result;
+  }
+  static Future<double> compareFaceFeature(Uint8List feature1,Uint8List feature2) async {
+    var result =
+    await _methodChannel.invokeMethod('compareFaceFeature', {'feature1': feature1,'feature2': feature2});
+    return result;
+  }
   /// 设置视频模式检测角度设置
   static Future<void> setFaceDetectDegree(
       FaceDetectOrientPriorityEnum faceDetectOrientPriorityEnum) async {
